@@ -11,6 +11,19 @@ import re, urllib, sys, os
 release_url = "https://github.com/radareorg/cutter/releases"
 git_server = "https://github.com"
 default_path = "/usr/bin/cutter"
+desktop_path = "/usr/share/applications/cutter.desktop"
+
+def desktop_shortcut():
+	return """[Desktop Entry]
+Name=cutter
+GenericName=Radare2 Cutter GUI
+Comment=Cutter Dissembler
+Exec=cutter
+Terminal=false
+Type=Application
+Categories=Qt;Debugger;Dissembler;Cutter
+Keywords=debugger;graphical;cutter
+"""
 
 def print_version(production, version):
 	print("\033[92m%s\033[00m: \033[91m%s\033[00m" %(production, version))
@@ -117,6 +130,7 @@ def do_install():
 					download_url = "%s%s" %(git_server, get_latest_release())
 					system_install(download_url, default_path)
 					os.popen("chmod 755 %s" %(default_path))
+					open(desktop_path, 'w').write(desktop_shortcut())
 					print("Installation completed")
 				else:
 					print("Canceled by user")
