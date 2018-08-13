@@ -121,26 +121,28 @@ def system_install(download_url, install_path):
 def do_install():
 	try:
 		check_path = os.popen("whereis cutter | awk '{print $2}'").read()
-		if check_path:
+		if check_path.replace("\n", ""):
+		# Current system is having cutter, replace it [?]
 			try:
 				print("\033[91mFound Cutter in your system!\n%s\033[00m" %(check_path))
 				choose = raw_input("Install Cutter anyway? [Y]")
-				if choose == "y" or choose == "Y":
-	
-					download_url = "%s%s" %(git_server, get_latest_release())
-					system_install(download_url, default_path)
-					os.popen("chmod 755 %s" %(default_path))
-					open(desktop_path, 'w').write(desktop_shortcut())
-					print("Installation completed")
-				else:
-					print("Canceled by user")
+				if choose != "y" or choose != "Y":
+					print("Canceled [by user]")
 					sys.exit(0)
 			except KeyboardInterrupt:
-				print("Canceled by user")
+				print("Terminated [by user]")
+	
+		download_url = "%s%s" %(git_server, get_latest_release())
+		system_install(download_url, default_path)
+		os.popen("chmod 755 %s" %(default_path))
+		open(desktop_path, 'w').write(desktop_shortcut())
+		print("Installation completed")
+
 
 	except Exception as error:
 		print("Error while installing Cutter! Reason: ")
 		sys.exit(error)
+
 
 def help():
 	print("""\t\tRadare2 Cutter Installer Script\n
