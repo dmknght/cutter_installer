@@ -120,7 +120,7 @@ def system_install(download_url, install_path):
 
 def do_install():
 	try:
-		check_path = os.popen("whereis cutter").read()
+		check_path = os.popen("whereis cutter | awk '{print $2}'").read()
 		if check_path:
 			try:
 				print("\033[91mFound Cutter in your system!\n%s\033[00m" %(check_path))
