@@ -126,7 +126,7 @@ def do_install():
 			try:
 				print("\033[91mFound Cutter in your system!\n%s\033[00m" %(check_path))
 				choose = raw_input("Install Cutter anyway? [Y]")
-				if choose != "y" or choose != "Y":
+				if choose != "y" and choose != "Y":
 					print("Canceled [by user]")
 					sys.exit(0)
 			except KeyboardInterrupt:
