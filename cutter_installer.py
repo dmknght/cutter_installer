@@ -10,7 +10,7 @@ import re, urllib, sys, os
 
 release_url = "https://github.com/radareorg/cutter/releases"
 git_server = "https://github.com"
-default_path = "/usr/bin/cutter"
+default_path = "/usr/local/bin/cutter"
 desktop_path = "/usr/share/applications/cutter.desktop"
 
 def desktop_shortcut():
