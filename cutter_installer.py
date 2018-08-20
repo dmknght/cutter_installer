@@ -8,10 +8,10 @@
 
 import re, urllib, sys, os
 
-release_url = "https://github.com/radareorg/cutter/releases"
-git_server = "https://github.com"
-default_path = "/usr/local/bin/cutter"
-desktop_path = "/usr/share/applications/cutter.desktop"
+REALEASE_URL = "https://github.com/radareorg/cutter/releases"
+GIT_SERVER = "https://github.com"
+DEFAULT_PATH = "/usr/local/bin/cutter"
+DESKTOP_PATH = "/usr/share/applications/cutter.desktop"
 
 def desktop_shortcut():
 	return """[Desktop Entry]
@@ -25,7 +25,7 @@ Categories=Qt;Debugger;Dissembler;Cutter
 Keywords=debugger;graphical;cutter
 """
 
-def print_version(production, version):
+def printf(production, version):
 	print("\033[92m%s\033[00m: \033[91m%s\033[00m" %(production, version))
 
 def get_latest_release(extension = ".AppImage"):
@@ -36,7 +36,7 @@ def get_latest_release(extension = ".AppImage"):
 
 	regex_link = r"href=\"(.*)%s" %(extension)
 
-	response = urllib.urlopen(release_url).read()
+	response = urllib.urlopen(REALEASE_URL).read()
 
 
 	release_file = re.findall(
@@ -56,14 +56,14 @@ def check_update():
 
 	# 1. Check update
 	try:
-		print("Connecting to %s" %(release_url))
+		print("Connecting to %s" %(REALEASE_URL))
 		latest_release = get_latest_release()
-		latest_version = re.findall(r"Cutter-v(.*)-", 
+		latest_version = re.findall(r"Cutter-v(.*)-",
 			latest_release,
 			re.MULTILINE
 		)[0]
 
-		print_version("\tLatest version", latest_version)
+		printf("\tLatest version", latest_version)
 
 	except Exception as error:
 		print("Error while connecting to server!")
@@ -77,17 +77,17 @@ def check_update():
 
 		if cutter_path:
 			cutter_version = os.popen("cutter -v 2>/dev/null | awk '{print $2}'").read().replace("\n", "")
-			print_version("\tInstallation path", cutter_path)
-			print_version("\tLocal version", cutter_version)
+			printf("\tInstallation path", cutter_path)
+			printf("\tLocal version", cutter_version)
 		else:
-			sys.exit("Can not find cutter!")
+			sys.exit("Can not find Cutter! Install it first?")
 
 	except Exception as error:
 		print("Error while checking local version! Reason: ")
 		sys.exit(error)
 
 	# End of check local_version
-	
+
 	# 3. Do update
 	try:
 		do_update(cutter_version, latest_version, cutter_path, latest_release)
@@ -98,12 +98,12 @@ def check_update():
 def do_update(local_version, server_version, install_path, update_url):
 
 	if local_version == server_version:
-		print_version("\nYour Cutter is up to date", server_version)
+		printf("\nYour Cutter is up to date", server_version)
 
 	elif local_version < server_version:
 		print("Updating cutter")
 
-		download_url = "%s%s" %(git_server, update_url)
+		download_url = "%s%s" %(GIT_SERVER, update_url)
 
 		system_install(download_url, install_path)
 
@@ -113,8 +113,8 @@ def do_update(local_version, server_version, install_path, update_url):
 		sys.exit("Unknow error")
 
 def system_install(download_url, install_path):
-	print_version("\tDownload URL", download_url)
-	print_version("\tLocal path", install_path)
+	printf("\tDownload URL", download_url)
+	printf("\tLocal path", install_path)
 
 	urllib.urlretrieve(download_url, install_path)
 
@@ -131,11 +131,16 @@ def do_install():
 					sys.exit(0)
 			except KeyboardInterrupt:
 				print("Terminated [by user]")
-	
-		download_url = "%s%s" %(git_server, get_latest_release())
-		system_install(download_url, default_path)
-		os.popen("chmod 755 %s" %(default_path))
-		open(desktop_path, 'w').write(desktop_shortcut())
+
+		download_url = "%s%s" %(GIT_SERVER, get_latest_release())
+		print("Downloading Cutter to your system")
+		system_install(download_url, DEFAULT_PATH)
+		print("Setting permission")
+		os.popen("chmod 755 %s" %(DEFAULT_PATH))
+		print("\t\033[91m%s\033[00m" %(os.popen("ls -la %s" %(check_path)).read().replace("\n", "")))
+		print("Creating .desktop shortcut file")
+		printf("\tDesktop shortcut", DESKTOP_PATH)
+		open(DESKTOP_PATH, 'w').write(desktop_shortcut())
 		print("Installation completed")
 
 
@@ -144,15 +149,32 @@ def do_install():
 		sys.exit(error)
 
 
-def help():
+def do_help():
+	# Usage advanced format string
+	# https://stackoverflow.com/a/1225648
 	print("""\t\tRadare2 Cutter Installer Script\n
-	\rRequires: python2
-	\rThis script must be run as root\n
-	\rUsage:
-	\r %s\thelp\t\tShow help banner
-	\r %s\tinstall\t\tInstall Cutter to your system
-	\r %s\tupdate\t\tUpdate your Cutter
-	""" %(sys.argv[0], sys.argv[0], sys.argv[0]))
+		\r\rRequires: python2
+		\r\rThis script must be run as root\n
+		\r\rUsage:
+		\r\r %(SYSPATH)s\thelp\t\tShow help banner
+		\r\r %(SYSPATH)s\tinstall\t\tInstall Cutter to your system
+		\r\r %(SYSPATH)s\tupdate\t\tUpdate your Cutter
+		\r\r %(SYSPATH)s\tuninstall\t\tUninstall Cutter"""
+	%{'SYSPATH': sys.argv[0]})
+
+def do_uninstall():
+	INSTALLED_PATH = os.popen("whereis cutter | awk '{print $2}'").read().replace("\n", "")
+	if INSTALLED_PATH:
+		try:
+			os.remove(INSTALLED_PATH)
+			printf("Cutter is removed", INSTALLED_PATH)
+			os.remove(DESKTOP_PATH)
+			printf("Desktop shortcut is removed", DESKTOP_PATH)
+		except Exception as err:
+			printf("Error while removing Cutter! Reason:")
+			sys.exit(err)
+	else:
+		printf("Uninstallation canceled", "Cutter not found!")
 
 if __name__ == "__main__":
 	if len(sys.argv) == 2:
@@ -161,8 +183,10 @@ if __name__ == "__main__":
 		elif sys.argv[1] == "update":
 			check_update()
 		elif sys.argv[1] == "help":
-			help()
+			do_help()
+		elif sys.argv[1] == "uninstall":
+			do_uninstall()
 		else:
 			print("Unknow command! Use help for more information.")
 	else:
-		help()
+		do_help()
