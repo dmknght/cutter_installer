@@ -137,6 +137,7 @@ def do_install():
 		system_install(download_url, DEFAULT_PATH)
 		print("Setting permission")
 		os.popen("chmod 755 %s" %(DEFAULT_PATH))
+		check_path = os.popen("whereis cutter | awk '{print $2}'").read() # Fix if check_path is None
 		print("\t\033[91m%s\033[00m" %(os.popen("ls -la %s" %(check_path)).read().replace("\n", "")))
 		print("Creating .desktop shortcut file")
 		printf("\tDesktop shortcut", DESKTOP_PATH)
