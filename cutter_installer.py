@@ -160,7 +160,7 @@ def do_help():
 		\r\r %(SYSPATH)s\thelp\t\tShow help banner
 		\r\r %(SYSPATH)s\tinstall\t\tInstall Cutter to your system
 		\r\r %(SYSPATH)s\tupdate\t\tUpdate your Cutter
-		\r\r %(SYSPATH)s\tuninstall\t\tUninstall Cutter"""
+		\r\r %(SYSPATH)s\tuninstall\tUninstall Cutter"""
 	%{'SYSPATH': sys.argv[0]})
 
 def do_uninstall():
