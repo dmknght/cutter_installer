@@ -10,20 +10,60 @@ import re, urllib, sys, os
 
 REALEASE_URL = "https://github.com/radareorg/cutter/releases"
 GIT_SERVER = "https://github.com"
-DEFAULT_PATH = "/usr/local/bin/cutter"
+DEFAULT_PATH = "/usr/bin/Cutter"
 DESKTOP_PATH = "/usr/share/applications/cutter.desktop"
+
+def create_appdata():
+	return """<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop">
+  <id>Cutter.desktop</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-3.0</project_license>
+  <name>Cutter</name>
+  <summary>A Qt and C++ GUI for radare2 reverse engineering framework</summary>
+  <description>
+    <p>
+      Cutter is Qt and C++ GUI for radare2, originally named Iaito. It is not aimed at existing radare2 users, but focuses on those whose aren’t fluent yet with the command line, likely because of the steep learning curve.
+    </p>
+  </description>
+  <screenshots>
+    <screenshot>
+      <image>https://raw.githubusercontent.com/radareorg/cutter/master/docs/screenshot.png</image>
+      <caption>Main UI</caption>
+    </screenshot>
+    <screenshot>
+      <image>http://beta.rada.re/en/latest/_images/cutter.png</image>
+      <caption>Light Theme</caption>
+    </screenshot>
+    <screenshot>
+      <image>http://beta.rada.re/en/latest/_images/cutter_dark.jpg</image>
+      <caption>Dark Theme</caption>
+    </screenshot>
+  </screenshots>
+  <url type="homepage">http://beta.rada.re/en/latest/cutter.html</url>
+  <releases>
+    <release version="1.7.2" date="2018-10-07" />
+    <release version="1.7.1" date="2018-08-25" />
+    <release version="1.7" date="2018-08-17" />
+    <release version="1.6" date="2018-07-13" />
+    <release version="1.5" date="2018-07-02" />
+    <release version="1.4" date="2018-04-24" />
+    <release version="1.3" date="2018-03-09" />
+    <release version="1.2" date="2018-01-30" />
+    <release version="1.1" date="2017-12-25" />
+    <release version="1.0" date="2017-12-03" />
+  </releases>
+</component>
+"""
 
 def desktop_shortcut():
 	return """[Desktop Entry]
-Name=cutter
-GenericName=Radare2 Cutter GUI
-Comment=Cutter Dissembler
-Exec=cutter
-Terminal=false
-Type=Application
-Categories=Qt;Debugger;Dissembler;Cutter
-Keywords=debugger;graphical;cutter
-"""
+	Type=Application
+	Name=Cutter
+	Exec=Cutter
+	Icon=cutter
+	Categories=Development;Disassembler;Debugger;Reversing;cutter;Cutter;
+	""".replace("\t", "")
 
 def printf(production, version):
 	print("\033[92m%s\033[00m: \033[91m%s\033[00m" %(production, version))
@@ -142,6 +182,10 @@ def do_install():
 		print("Creating .desktop shortcut file")
 		printf("\tDesktop shortcut", DESKTOP_PATH)
 		open(DESKTOP_PATH, 'w').write(desktop_shortcut())
+		printf("Adding image icon")
+		os.popen("cp cutter.svg /usr/share/pixmaps/cutter.svg")
+		printf("Writing appdata information")
+		open("/usr/share/appdata/Cutter.appdata.xml", "w").write(create_appdata())
 		print("Installation completed")
 
 
