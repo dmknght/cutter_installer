@@ -10,7 +10,7 @@ import re, urllib, sys, os
 
 REALEASE_URL = "https://github.com/radareorg/cutter/releases"
 GIT_SERVER = "https://github.com"
-DEFAULT_PATH = "/usr/bin/Cutter"
+DEFAULT_PATH = "/usr/local/bin/cutter"
 DESKTOP_PATH = "/usr/share/applications/cutter.desktop"
 
 def create_appdata():
@@ -59,8 +59,8 @@ def create_appdata():
 def desktop_shortcut():
 	return """[Desktop Entry]
 	Type=Application
-	Name=Cutter
-	Exec=Cutter
+	Name=cutter
+	Exec=cutter
 	Icon=cutter
 	Categories=Development;Disassembler;Debugger;Reversing;cutter;Cutter;
 	""".replace("\t", "")
